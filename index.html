@@ -3,63 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GX Browser</title>
+    <title>SAB BROWSER</title>
+    <!-- Modern Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <!-- Tab Strip -->
-    <div class="tab-strip">
-        <div class="tabs-container" id="tabs-container"></div>
-        <div class="new-tab-btn" id="new-tab-btn">+</div>
-    </div>
-
-    <!-- Toolbar -->
-    <div class="toolbar">
-        <button class="nav-btn" id="sidebar-toggle">☰</button>
-        <button class="nav-btn" id="back-btn">←</button>
-        <button class="nav-btn" id="forward-btn">→</button>
-        <button class="nav-btn" id="refresh-btn">↻</button>
-
-        <div class="address-bar">
-            <input type="text" id="url-input" placeholder="Enter URL">
-            <button class="go-btn" id="go-btn">→</button>
+    <div class="browser-window">
+        <!-- TOP CHROME -->
+        <div class="titlebar">
+            <!-- Mac-like window controls (visual only) -->
+            <div class="window-controls">
+                <span class="control close"></span>
+                <span class="control minimize"></span>
+                <span class="control maximize"></span>
+            </div>
+            
+            <!-- Tab Strip -->
+            <div class="tab-strip" id="tabs-container"></div>
+            <button class="new-tab-btn" id="new-tab-btn" title="New Tab"><i class="ph ph-plus"></i></button>
         </div>
 
-        <button class="nav-btn" id="bookmark-btn">⭐</button>
-        <button class="nav-btn" id="settings-btn">⚙️</button>
-    </div>
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button class="nav-btn" id="sidebar-toggle" title="Toggle Sidebar"><i class="ph ph-list"></i></button>
+                <div class="nav-controls">
+                    <button class="nav-btn" id="back-btn" title="Go Back"><i class="ph ph-caret-left"></i></button>
+                    <button class="nav-btn" id="forward-btn" title="Go Forward"><i class="ph ph-caret-right"></i></button>
+                    <button class="nav-btn" id="refresh-btn" title="Refresh"><i class="ph ph-arrows-clockwise"></i></button>
+                </div>
+            </div>
 
-    <div class="main">
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">🚀 Quick Access</div>
-            <div class="sidebar-section">
-                <h3>Shortcuts</h3>
-                <div id="shortcuts-grid"></div>
+            <div class="address-bar-container">
+                <div class="address-bar">
+                    <div class="security-badge"><i class="ph ph-lock-key"></i></div>
+                    <input type="text" id="url-input" placeholder="Search Google or type a URL" autocomplete="off" spellcheck="false">
+                    <button class="icon-btn" id="go-btn" title="Navigate"><i class="ph ph-arrow-right"></i></button>
+                    <button class="icon-btn" id="bookmark-btn" title="Bookmark this page"><i class="ph ph-star"></i></button>
+                </div>
             </div>
-            <div class="sidebar-section">
-                <h3>Bookmarks</h3>
-                <div id="bookmarks-list"></div>
+
+            <div class="toolbar-right">
+                <button class="nav-btn" id="settings-btn" title="Settings"><i class="ph ph-gear"></i></button>
+                <div class="user-avatar"><img src="https://ui-avatars.com/api/?name=User&background=60a5fa&color=fff&bold=true" alt="User"></div>
             </div>
-            <div class="sidebar-section">
-                <h3>History</h3>
-                <div id="history-list"></div>
+        </div>
+
+        <div class="main-body">
+            <!-- Sidebar -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <i class="ph ph-rocket-launch text-accent"></i> Quick Access
+                </div>
+                <div class="sidebar-content">
+                    <div class="sidebar-section">
+                        <h3>Shortcuts</h3>
+                        <div id="shortcuts-grid" class="grid-list"></div>
+                    </div>
+                    <div class="sidebar-section">
+                        <h3>Bookmarks</h3>
+                        <div id="bookmarks-list" class="item-list"></div>
+                    </div>
+                    <div class="sidebar-section">
+                        <h3>History</h3>
+                        <div id="history-list" class="item-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div id="iframes-container" class="iframes-wrapper"></div>
+
+                <div class="loading-overlay" id="loading-overlay">
+                    <div class="loader-container">
+                        <div class="spinner"></div>
+                        <div class="loading-text">Loading secure connection...</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="content-area">
-            <div id="iframes-container"></div>
-
-            <div class="loading-overlay" id="loading-overlay">
-                <div class="spinner"></div>
-                <div id="loading-text">Loading...</div>
-            </div>
+        <div class="status-bar">
+            <div class="status-left"><i class="ph ph-shield-check"></i> SAB Engine v2.0</div>
+            <div class="status-right" id="status-right">0 tabs open</div>
         </div>
-    </div>
-
-    <div class="status-bar">
-        <div>GX Browser</div>
-        <div id="status-right">0 tabs</div>
     </div>
 
     <script src="script.js"></script>
