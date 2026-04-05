@@ -1,9 +1,49 @@
+import { auth } from "./firebase.js";
+import {
+    GoogleAuthProvider,
+    signInWithPopup,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+/* 🔐 GOOGLE LOGIN */
+const provider = new GoogleAuthProvider();
+const authScreen = document.getElementById("auth-screen");
+
+document.getElementById("login-btn").onclick = () => {
+    document.getElementById("login-btn").disabled = true;
+    document.getElementById("login-btn").innerText = "Signing in...";
+    signInWithPopup(auth, provider)
+        .then(result => {
+            console.log("Signed in as:", result.user.displayName);
+        })
+        .catch(err => {
+            console.error("Login error:", err);
+            document.getElementById("login-btn").disabled = false;
+            document.getElementById("login-btn").innerText = "Sign in with Google";
+        });
+};
+
+document.getElementById("logout-btn").onclick = () => {
+    signOut(auth);
+};
+
+onAuthStateChanged(auth, user => {
+    if (user) {
+        authScreen.style.display = "none";
+        console.log("Welcome King 👑:", user.displayName);
+    } else {
+        authScreen.style.display = "flex";
+    }
+});
+
+/* 🌐 BROWSER SYSTEM */
 let tabs = [];
 let currentTabId = null;
 let tabCounter = 0;
 
 const tabsContainer = document.getElementById('tabs-container');
-const iframesContainer = document.getElementById('iframes-container');
+const iframesContainer = document.getElementById('iframes-wrapper');
 const urlInput = document.getElementById('url-input');
 const loadingOverlay = document.getElementById('loading-overlay');
 const shortcutsGrid = document.getElementById('shortcuts-grid');
@@ -30,7 +70,7 @@ function normalizeUrl(input) {
 }
 
 /* Tab management */
-function createNewTab(url = 'https://bing.com', switchTo = true) {
+function createNewTab(url = 'https://www.google.com', switchTo = true) {
     tabCounter++;
     const id = 'tab-' + tabCounter;
 
@@ -354,7 +394,7 @@ function toggleSettings() {
     header.className = 'settings-header';
     header.innerHTML = `
         <span><i class="ph ph-gear" style="margin-right: 8px;"></i>Browser Settings</span>
-        <i class="ph ph-x close-settings" onclick="toggleSettings()"></i>
+        <i class="ph ph-x close-settings" style="cursor: pointer;" onclick="toggleSettings()"></i>
     `;
     settingsModal.appendChild(header);
 
@@ -396,12 +436,12 @@ function saveSession() {
 function restoreSession() {
     try {
         const s = JSON.parse(localStorage.getItem('sab_session_tabs') || '[]');
-        if (!s.length) return createNewTab('https://bing.com');
+        if (!s.length) return createNewTab('https://www.google.com');
         s.forEach(t => {
             tabCounter++;
             const id = t.id || ('tab-' + tabCounter);
             const iframe = document.createElement('iframe');
-            const url = t.url || (t.history && t.history[0]) || 'https://bing.com';
+            const url = t.url || (t.history && t.history[0]) || 'https://www.google.com';
             iframe.src = url;
             iframe.style.display = 'none';
             iframe.setAttribute('sandbox', 'allow-scripts allow-forms allow-same-origin allow-popups');
@@ -411,11 +451,11 @@ function restoreSession() {
         });
         // switch to first saved tab
         if (tabs.length) switchTab(tabs[0].id);
-    } catch (e) { createNewTab('https://bing.com'); }
+    } catch (e) { createNewTab('https://www.google.com'); }
 }
 
 /* Wiring UI buttons */
-document.getElementById('new-tab-btn').onclick = () => createNewTab('https://bing.com');
+document.getElementById('new-tab-btn').onclick = () => createNewTab('https://www.google.com');
 document.getElementById('go-btn').onclick = () => navigateTo(urlInput.value);
 
 urlInput.addEventListener('keypress', e => {
