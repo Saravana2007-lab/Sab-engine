@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAB BROWSER</title>
-    <!-- Modern Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
     <!-- Ambient Background Orbs -->
     <div class="ambient-orbs">
         <div class="orb orb-1"></div>
@@ -17,20 +17,18 @@
         <div class="orb orb-3"></div>
     </div>
 
-    <!-- Command Palette Overlay -->
+    <!-- Command Palette -->
     <div class="cmd-palette-backdrop" id="cmd-palette-backdrop">
         <div class="cmd-palette" id="cmd-palette">
             <div class="cmd-input-container">
                 <i class="ph ph-magnifying-glass"></i>
-                <input type="text" id="cmd-input" placeholder="Search or type a command... (Esc to close)" autocomplete="off">
+                <input type="text" id="cmd-input" placeholder="Search or type a URL… (Esc to close)" autocomplete="off">
             </div>
-            <div class="cmd-results" id="cmd-results">
-                <!-- Search results populate here -->
-            </div>
+            <div class="cmd-results" id="cmd-results"></div>
         </div>
     </div>
 
-    <!-- 🔐 GOOGLE LOGIN SCREEN -->
+    <!-- Auth Screen -->
     <div id="auth-screen">
         <div class="auth-box">
             <h1>Welcome King 👑</h1>
@@ -40,18 +38,16 @@
     </div>
 
     <div class="browser-window">
-        <!-- TOP CHROME -->
+
+        <!-- Title Bar + Tabs -->
         <div class="titlebar">
-            <!-- Mac-like window controls (visual only) -->
             <div class="window-controls">
                 <span class="control close"></span>
                 <span class="control minimize"></span>
                 <span class="control maximize"></span>
             </div>
-            
-            <!-- Tab Strip -->
             <div class="tab-strip" id="tabs-container"></div>
-            <button class="new-tab-btn" id="new-tab-btn" title="New Tab"><i class="ph ph-plus"></i></button>
+            <button class="new-tab-btn" id="new-tab-btn" title="New Tab (Ctrl+T)"><i class="ph ph-plus"></i></button>
         </div>
 
         <!-- Toolbar -->
@@ -59,29 +55,34 @@
             <div class="toolbar-left">
                 <button class="nav-btn" id="sidebar-toggle" title="Toggle Sidebar"><i class="ph ph-list"></i></button>
                 <div class="nav-controls">
-                    <button class="nav-btn" id="back-btn" title="Go Back"><i class="ph ph-caret-left"></i></button>
-                    <button class="nav-btn" id="forward-btn" title="Go Forward"><i class="ph ph-caret-right"></i></button>
-                    <button class="nav-btn" id="refresh-btn" title="Refresh"><i class="ph ph-arrows-clockwise"></i></button>
+                    <button class="nav-btn" id="back-btn"    title="Back (Alt+←)"><i class="ph ph-caret-left"></i></button>
+                    <button class="nav-btn" id="forward-btn" title="Forward (Alt+→)"><i class="ph ph-caret-right"></i></button>
+                    <button class="nav-btn" id="refresh-btn" title="Refresh (Ctrl+R)"><i class="ph ph-arrows-clockwise"></i></button>
                 </div>
             </div>
 
             <div class="address-bar-container">
                 <div class="address-bar">
-                    <div class="security-badge"><i class="ph ph-lock-key"></i></div>
-                    <input type="text" id="url-input" placeholder="Search Google or type a URL" autocomplete="off" spellcheck="false">
-                    <button class="icon-btn" id="go-btn" title="Navigate"><i class="ph ph-arrow-right"></i></button>
-                    <button class="icon-btn" id="bookmark-btn" title="Bookmark this page"><i class="ph ph-star"></i></button>
+                    <div class="security-badge"><i class="ph ph-house"></i></div>
+                    <input type="text" id="url-input"
+                           placeholder="Search or enter address — try anything!"
+                           autocomplete="off" spellcheck="false">
+                    <button class="icon-btn" id="go-btn" title="Go"><i class="ph ph-arrow-right"></i></button>
+                    <button class="icon-btn" id="bookmark-btn" title="Bookmark"><i class="ph ph-star"></i></button>
                 </div>
             </div>
 
             <div class="toolbar-right">
                 <button class="nav-btn" id="settings-btn" title="Settings"><i class="ph ph-gear"></i></button>
-                <button class="nav-btn" id="logout-btn" title="Logout"><i class="ph ph-sign-out"></i></button>
-                <div class="user-avatar"><img src="https://ui-avatars.com/api/?name=User&background=60a5fa&color=fff&bold=true" alt="User"></div>
+                <button class="nav-btn" id="logout-btn"   title="Logout"><i class="ph ph-sign-out"></i></button>
+                <div class="user-avatar">
+                    <img src="https://ui-avatars.com/api/?name=User&background=60a5fa&color=fff&bold=true" alt="User">
+                </div>
             </div>
         </div>
 
         <div class="main-body">
+
             <!-- Sidebar -->
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-header">
@@ -105,18 +106,32 @@
 
             <!-- Content Area -->
             <div class="content-area">
-                
-                <!-- Start Dashboard -->
+
+                <!-- New Tab / Dashboard Page -->
                 <div class="dashboard-container" id="dashboard-container">
+
                     <div class="clock-widget">
                         <div class="time" id="clock-time">00:00</div>
                         <div class="date" id="clock-date">Monday, Jan 1</div>
                     </div>
+
                     <h2 class="dashboard-greeting" id="dashboard-greeting">Good Day, King 👑</h2>
-                    
+
+                    <!-- Big search bar on the dashboard -->
+                    <div class="dash-search-wrap">
+                        <div class="dash-search-bar">
+                            <i class="ph ph-magnifying-glass"></i>
+                            <input type="text" id="dash-search-input"
+                                   placeholder="Search the web or enter a URL…"
+                                   autocomplete="off" spellcheck="false">
+                            <button id="dash-search-btn"><i class="ph ph-arrow-right"></i></button>
+                        </div>
+                        <div class="dash-search-hint">Powered by DuckDuckGo · Press Enter to go</div>
+                    </div>
+
                     <div class="dashboard-grid">
                         <div class="tilt-card" data-url="https://www.youtube.com">
-                            <div class="card-icon"><i class="ph ph-youtube-logo" style="color: #ff0000;"></i></div>
+                            <div class="card-icon"><i class="ph ph-youtube-logo" style="color:#ff0000"></i></div>
                             <div class="card-title">YouTube</div>
                         </div>
                         <div class="tilt-card" data-url="https://github.com">
@@ -124,44 +139,48 @@
                             <div class="card-title">GitHub</div>
                         </div>
                         <div class="tilt-card" data-url="https://twitter.com">
-                            <div class="card-icon"><i class="ph ph-twitter-logo" style="color: #1da1f2;"></i></div>
+                            <div class="card-icon"><i class="ph ph-twitter-logo" style="color:#1da1f2"></i></div>
                             <div class="card-title">Twitter</div>
                         </div>
                         <div class="tilt-card" data-url="https://chat.openai.com">
-                            <div class="card-icon"><i class="ph ph-robot" style="color: #10a37f;"></i></div>
+                            <div class="card-icon"><i class="ph ph-robot" style="color:#10a37f"></i></div>
                             <div class="card-title">ChatGPT</div>
+                        </div>
+                        <div class="tilt-card" data-url="https://www.reddit.com">
+                            <div class="card-icon"><i class="ph ph-reddit-logo" style="color:#ff4500"></i></div>
+                            <div class="card-title">Reddit</div>
+                        </div>
+                        <div class="tilt-card" data-url="https://duckduckgo.com">
+                            <div class="card-icon"><i class="ph ph-duck" style="color:#de5833"></i></div>
+                            <div class="card-title">DuckDuckGo</div>
                         </div>
                     </div>
                 </div>
 
+                <!-- iFrames live here -->
                 <div id="iframes-container" class="iframes-wrapper"></div>
 
+                <!-- Loading overlay -->
                 <div class="loading-overlay" id="loading-overlay">
                     <div class="loader-container">
                         <div class="spinner"></div>
-                        <div class="loading-text">Loading secure connection...</div>
+                        <div class="loading-text">Loading…</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="status-bar">
-            <div class="status-left"><i class="ph ph-shield-check"></i> SAB Engine v2.0</div>
+            <div class="status-left"><i class="ph ph-shield-check"></i> SAB Engine v3.0</div>
             <div class="status-right" id="status-right">0 tabs open</div>
         </div>
-    </div> <!-- Closes browser-window -->
-    
-    <!-- Blackfire Cursor Trail Wrapper -->
+    </div>
+
+    <!-- Cursor Trail -->
     <div class="cursor-wrapper">
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
+        <div class="circle"></div><div class="circle"></div><div class="circle"></div>
+        <div class="circle"></div><div class="circle"></div><div class="circle"></div>
+        <div class="circle"></div><div class="circle"></div><div class="circle"></div>
         <div class="circle"></div>
     </div>
 
