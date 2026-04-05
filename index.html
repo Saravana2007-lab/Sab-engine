@@ -10,6 +10,26 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Ambient Background Orbs -->
+    <div class="ambient-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Command Palette Overlay -->
+    <div class="cmd-palette-backdrop" id="cmd-palette-backdrop">
+        <div class="cmd-palette" id="cmd-palette">
+            <div class="cmd-input-container">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" id="cmd-input" placeholder="Search or type a command... (Esc to close)" autocomplete="off">
+            </div>
+            <div class="cmd-results" id="cmd-results">
+                <!-- Search results populate here -->
+            </div>
+        </div>
+    </div>
+
     <!-- 🔐 GOOGLE LOGIN SCREEN -->
     <div id="auth-screen">
         <div class="auth-box">
@@ -85,6 +105,35 @@
 
             <!-- Content Area -->
             <div class="content-area">
+                
+                <!-- Start Dashboard -->
+                <div class="dashboard-container" id="dashboard-container">
+                    <div class="clock-widget">
+                        <div class="time" id="clock-time">00:00</div>
+                        <div class="date" id="clock-date">Monday, Jan 1</div>
+                    </div>
+                    <h2 class="dashboard-greeting" id="dashboard-greeting">Good Day, King 👑</h2>
+                    
+                    <div class="dashboard-grid">
+                        <div class="tilt-card" data-url="https://www.youtube.com">
+                            <div class="card-icon"><i class="ph ph-youtube-logo" style="color: #ff0000;"></i></div>
+                            <div class="card-title">YouTube</div>
+                        </div>
+                        <div class="tilt-card" data-url="https://github.com">
+                            <div class="card-icon"><i class="ph ph-github-logo"></i></div>
+                            <div class="card-title">GitHub</div>
+                        </div>
+                        <div class="tilt-card" data-url="https://twitter.com">
+                            <div class="card-icon"><i class="ph ph-twitter-logo" style="color: #1da1f2;"></i></div>
+                            <div class="card-title">Twitter</div>
+                        </div>
+                        <div class="tilt-card" data-url="https://chat.openai.com">
+                            <div class="card-icon"><i class="ph ph-robot" style="color: #10a37f;"></i></div>
+                            <div class="card-title">ChatGPT</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="iframes-container" class="iframes-wrapper"></div>
 
                 <div class="loading-overlay" id="loading-overlay">
@@ -100,6 +149,20 @@
             <div class="status-left"><i class="ph ph-shield-check"></i> SAB Engine v2.0</div>
             <div class="status-right" id="status-right">0 tabs open</div>
         </div>
+    </div> <!-- Closes browser-window -->
+    
+    <!-- Blackfire Cursor Trail Wrapper -->
+    <div class="cursor-wrapper">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
     </div>
 
     <script type="module" src="script.js"></script>

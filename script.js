@@ -43,7 +43,7 @@ let currentTabId = null;
 let tabCounter = 0;
 
 const tabsContainer = document.getElementById('tabs-container');
-const iframesContainer = document.getElementById('iframes-wrapper');
+const iframesContainer = document.getElementById('iframes-container');
 const urlInput = document.getElementById('url-input');
 const loadingOverlay = document.getElementById('loading-overlay');
 const shortcutsGrid = document.getElementById('shortcuts-grid');
@@ -124,6 +124,9 @@ function closeTab(id) {
             currentTabId = null;
             urlInput.value = '';
             renderTabs();
+            // Show dashboard, hide frames
+            document.getElementById('dashboard-container').classList.remove('hidden');
+            document.getElementById('iframes-container').classList.add('hidden');
         }
     } else {
         renderTabs();
@@ -172,6 +175,9 @@ function switchTab(id) {
     const tab = tabs.find(t => t.id === id);
     if (tab) urlInput.value = tab.url;
     renderTabs();
+
+    document.getElementById('dashboard-container').classList.add('hidden');
+    document.getElementById('iframes-container').classList.remove('hidden');
 }
 
 function navigateTo(url, addToHistory = true) {
@@ -450,8 +456,16 @@ function restoreSession() {
             tabs.push({ id, url, history: t.history || [url], historyIndex: t.historyIndex || 0, iframe });
         });
         // switch to first saved tab
-        if (tabs.length) switchTab(tabs[0].id);
-    } catch (e) { createNewTab('https://www.google.com'); }
+        if (tabs.length) {
+            switchTab(tabs[0].id);
+        } else {
+            document.getElementById('dashboard-container').classList.remove('hidden');
+            document.getElementById('iframes-container').classList.add('hidden');
+        }
+    } catch (e) {
+        document.getElementById('dashboard-container').classList.remove('hidden');
+        document.getElementById('iframes-container').classList.add('hidden');
+    }
 }
 
 /* Wiring UI buttons */
@@ -482,3 +496,161 @@ restoreSession();
 
 // ensure overlay hidden initially
 hideLoading();
+
+/* ==============================================
+   BLACKFIRE CURSOR INTEGRATION
+============================================== */
+const cursorCoords = { x: 0, y: 0 };
+const cursorCircles = document.querySelectorAll(".circle");
+
+cursorCircles.forEach(function (circle, index) {
+  circle.x = 0;
+  circle.y = 0;
+  circle.style.transition = "opacity 0.2s ease, transform 0s";
+});
+
+window.addEventListener("mousemove", function (e) {
+  cursorCoords.x = e.clientX;
+  cursorCoords.y = e.clientY;
+});
+
+// Hide cursor trail when hovering over cross-origin iframe or leaving screen
+window.addEventListener("mouseout", function (e) {
+  if (e.relatedTarget === null) {
+      cursorCircles.forEach(c => c.style.opacity = '0');
+  }
+});
+window.addEventListener("mouseover", function (e) {
+  cursorCircles.forEach(c => c.style.opacity = '1');
+});
+
+function animateCircles() {
+  let x = cursorCoords.x;
+  let y = cursorCoords.y;
+
+  cursorCircles.forEach(function (circle, index) {
+    const scale = (cursorCircles.length - index) / cursorCircles.length;
+    // Uses translate3d for flawless hardware-accelerated mapping that perfectly aligns with the native hardware pointer
+    circle.style.transform = `translate3d(${x - 12}px, ${y - 12}px, 0) scale(${scale})`;
+
+    circle.x = x;
+    circle.y = y;
+
+    const nextCircle = cursorCircles[index + 1] || cursorCircles[0];
+    x += (nextCircle.x - x) * 0.3;
+    y += (nextCircle.y - y) * 0.3;
+  });
+
+  requestAnimationFrame(animateCircles);
+}
+
+animateCircles();
+
+/* ==============================================
+   INTERACTIVE COMPONENTS LOGIC
+============================================== */
+
+// 1. Live Clock
+function updateClock() {
+    const timeEl = document.getElementById('clock-time');
+    const dateEl = document.getElementById('clock-date');
+    if (!timeEl || !dateEl) return;
+    const now = new Date();
+    timeEl.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    dateEl.innerText = now.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// 2. 3D Tilt Cards (Dashboard)
+document.querySelectorAll('.tilt-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -15; 
+        const rotateY = ((x - centerX) / centerX) * 15;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    });
+
+    card.addEventListener('click', () => {
+        addRipple(card, event);
+        const url = card.dataset.url;
+        if(url) createNewTab(url);
+    });
+});
+
+// 3. Command Palette (Cmd + K)
+const cmdBackdrop = document.getElementById('cmd-palette-backdrop');
+const cmdInput = document.getElementById('cmd-input');
+const cmdResults = document.getElementById('cmd-results');
+
+window.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        cmdBackdrop.classList.toggle('active');
+        if (cmdBackdrop.classList.contains('active')) {
+            cmdInput.focus();
+            cmdResults.innerHTML = `<div class="cmd-result-item"><i class="ph ph-magnifying-glass"></i><span>Start typing to search...</span></div>`;
+        } else {
+            cmdInput.blur();
+        }
+    }
+    if (e.key === 'Escape' && cmdBackdrop.classList.contains('active')) {
+        cmdBackdrop.classList.remove('active');
+        cmdInput.blur();
+    }
+});
+
+cmdInput.addEventListener('input', e => {
+    const val = e.target.value.trim();
+    if(val.length > 0) {
+        cmdResults.innerHTML = `
+            <div class="cmd-result-item selected" onclick="window.createNewTab('https://google.com/search?q=${val}')">
+                <i class="ph ph-google-logo"></i><span>Search Google for "${val}"</span>
+            </div>
+            <div class="cmd-result-item" onclick="window.createNewTab('https://${val}')">
+                <i class="ph ph-globe"></i><span>Go to ${val}</span>
+            </div>`;
+    } else {
+        cmdResults.innerHTML = `<div class="cmd-result-item"><i class="ph ph-magnifying-glass"></i><span>Start typing to search...</span></div>`;
+    }
+});
+window.createNewTab = createNewTab; // Expose for inline onclick
+
+// 4. Button Ripples
+function addRipple(el, e) {
+    const circle = document.createElement('div');
+    circle.classList.add('ripple');
+    const rect = el.getBoundingClientRect();
+    const d = Math.max(rect.width, rect.height);
+    circle.style.width = circle.style.height = d + 'px';
+    const x = e.clientX - rect.left - d/2;
+    const y = e.clientY - rect.top - d/2;
+    circle.style.left = x + 'px';
+    circle.style.top = y + 'px';
+    el.appendChild(circle);
+    setTimeout(() => circle.remove(), 600);
+}
+
+document.querySelectorAll('button').forEach(btn => {
+    // skip tab close buttons or others that might not look right
+    if(btn.className.includes('nav-btn') || btn.className.includes('new-tab-btn')) {
+        btn.style.position = 'relative';
+        btn.style.overflow = 'hidden';
+        btn.addEventListener('mousedown', function(e) { addRipple(this, e); });
+    }
+});
+
+// 5. Address Bar Focus Neon
+const addrBarContainer = document.querySelector('.address-bar');
+if(urlInput && addrBarContainer) {
+    urlInput.addEventListener('focus', () => addrBarContainer.classList.add('neon-focus'));
+    urlInput.addEventListener('blur', () => addrBarContainer.classList.remove('neon-focus'));
+}
